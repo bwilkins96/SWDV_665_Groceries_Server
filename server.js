@@ -9,7 +9,7 @@ var methodOverride = require('method-override');
 var cors = require('cors');
 
 // Configuration
-mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/groceries");
+mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/groceries", { useNewUrlParser: true, useUnifiedTopology: true });
 
 app.use(bodyParser.urlencoded({'extended': 'true'}));
 app.use(bodyParser.json());
@@ -41,10 +41,10 @@ app.get('/api/groceries', function (req, res) {
 
         // if there is an error retrieving, send the error. nothing after res.send(err) will execute
         if (err) {
-            res.send(err);
+            return res.send(err);
         }
 
-        res.json(groceries); // return all groceries in JSON format
+        return res.json(groceries); // return all groceries in JSON format
     });
 });
 
@@ -59,14 +59,14 @@ app.post('/api/groceries', function (req, res) {
         done: false
     }, function (err, grocery) {
         if (err) {
-            res.send(err);
+            return res.send(err);
         }
 
         // create and return all the groceries
         Grocery.find(function (err, groceries) {
             if (err)
-                res.send(err);
-            res.json(groceries);
+                return res.send(err);
+            return res.json(groceries);
         });
     });
 
@@ -81,9 +81,9 @@ app.put('/api/groceries/:id', function (req, res) {
     console.log("Updating item -", req.params.id);
     Grocery.update({_id: req.params.id}, grocery, function (err, raw) {
         if (err) {
-            res.send(err);
+            return res.send(err);
         }
-        res.send(raw);
+        return res.send(raw);
     });
 });
 
@@ -100,10 +100,10 @@ app.delete('/api/groceries/:id', function (req, res) {
             console.log('Deleting item -', req.params.id);
             Grocery.find(function (err, groceries) {
                 if (err) {
-                    res.send(err);
+                    return res.send(err);
                 }
                 else {
-                    res.json(groceries);
+                    return res.json(groceries);
                 }
             });
         }
@@ -116,10 +116,10 @@ app.get('/api/groceries/:id', function (req, res) {
         function(err, grocery) {
             if (err) {
                 console.log('Error finding item -', req.params.id);
-                res.send(err);
+                return res.send(err);
             } else {
                 console.log('Sending item -', req.params.id);
-                res.json(grocery);
+                return res.json(grocery);
             }
         });
 });
